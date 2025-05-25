@@ -1,21 +1,107 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+@plugin 'daisyui' {
+  themes: light --default;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@plugin 'daisyui/theme' {
+  name: 'light';
+  default: true;
+
+  --color-base-100: #fafafa;
+  --color-base-200: #f0f0f0;
+  --color-base-300: #e0e0e0;
+  --color-base-content: #1a1a1a;
+
+  --color-primary: #ff6b00;
+  --color-primary-content: #ffffff;
+
+  --color-secondary: #00a8ff;
+  --color-secondary-content: #ffffff;
+
+  --color-accent: #ffa500;
+  --color-accent-content: #000000;
+
+  --color-neutral: #4a5568;
+  --color-neutral-content: #ffffff;
+
+  --color-info: #0ea5e9;
+  --color-info-content: #ffffff;
+  --color-success: #10b981;
+  --color-success-content: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-content: #000000;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+
+  --radius-selector: 0.125rem;
+  --radius-field: 0.125rem;
+  --radius-box: 0.25rem;
+
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+
+  --border: 1px;
+
+  --depth: 0.4;
+  --noise: 0.01;
+}
+
+@layer utilities {
+  .aperture-glow {
+    box-shadow: 0 0 20px rgba(255, 107, 0, 0.5);
+  }
+
+  .portal-blue-glow {
+    box-shadow: 0 0 20px rgba(0, 168, 255, 0.5);
+  }
+
+  .portal-orange-glow {
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.5);
+  }
+
+  .aperture-border {
+    border: 2px solid hsl(var(--color-primary));
+    border-radius: 0.125rem;
+  }
+
+  .testing-chamber-grid {
+    background-image: linear-gradient(
+        rgba(255, 107, 0, 0.03) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, rgba(255, 107, 0, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  .font-spacegrotesk {
+    font-family: var(--font-space-grotesk);
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .prose {
+    @apply prose-neutral max-w-none;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3 {
+    @apply font-bold;
+  }
+
+  .prose code {
+    @apply bg-base-300 text-primary px-1 py-0.5 rounded-sm;
+  }
+
+  .prose pre {
+    @apply bg-base-200 border border-base-300;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-primary italic;
+  }
+
+  .prose a {
+    @apply text-secondary hover:text-primary transition-colors;
+  }
 }
