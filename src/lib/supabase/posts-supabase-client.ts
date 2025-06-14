@@ -1,4 +1,3 @@
-import { createServerSupabaseClient } from './server';
 import { createClient } from './client';
 
 export interface PostMetadata {
@@ -15,66 +14,6 @@ export interface PostMetadata {
 
 export interface Post extends PostMetadata {
   content: string;
-}
-
-// server-side get all posts function
-export async function getAllPosts(): Promise<PostMetadata[]> {
-  const supabase = await createServerSupabaseClient();
-
-  const { data, error } = await supabase
-    .from('posts')
-    .select(
-      'id, title, description, created_at, image, slug, category, author, published'
-    )
-    .eq('published', true)
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching posts:', error);
-    return [];
-  }
-
-  return data.map((post) => ({
-    id: post.id,
-    title: post.title,
-    description: post.description || '',
-    date: post.created_at,
-    image: post.image || '',
-    slug: post.slug,
-    category: post.category || '',
-    author: post.author,
-    published: post.published,
-  }));
-}
-
-// server-side function for getting a single post
-export async function getPostBySlug(slug: string): Promise<Post | null> {
-  const supabase = await createServerSupabaseClient();
-
-  const { data, error } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('slug', slug)
-    .eq('published', true)
-    .single();
-
-  if (error || !data) {
-    console.error('Error fetching post:', error);
-    return null;
-  }
-
-  return {
-    id: data.id,
-    title: data.title,
-    description: data.description || '',
-    date: data.created_at,
-    image: data.image || '',
-    slug: data.slug,
-    category: data.category || '',
-    author: data.author,
-    content: data.content,
-    published: data.published,
-  };
 }
 
 // client-side function for admin to get all posts (including unpublished)
@@ -154,12 +93,31 @@ export async function deletePost(id: string) {
   }
 }
 
-// generate static params for posts
-export async function getAllPostSlugs() {
-  const posts = await getAllPosts();
-  return posts.map((post) => ({
-    params: {
-      slug: post.slug,
-    },
-  }));
+// client-side function to get a single post for editing
+export async function getPostByIdAdmin(id: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error || !data) {
+    console.error('Error fetching post:', error);
+    return null;
+  }
+
+  return {
+    id: data.id,
+    title: data.title,
+    description: data.description || '',
+    date: data.created_at,
+    image: data.image || '',
+    slug: data.slug,
+    category: data.category || '',
+    author: data.author,
+    content: data.content,
+    published: data.published,
+  };
 }
