@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@iconify/react": "^6.0.0",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.50.0",
     "gray-matter": "^4.0.3",
     "markdown-to-jsx": "^7.7.6",
     "next": "15.3.2",
