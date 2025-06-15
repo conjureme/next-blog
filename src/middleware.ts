@@ -53,6 +53,16 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  if (path.startsWith('/admin/posts')) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+  }
+
   return response;
 }
 
