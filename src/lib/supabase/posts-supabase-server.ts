@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from './server';
+import { createServerSupabaseClientStatic } from './server-static';
 
 export interface PostMetadata {
   id: string;
@@ -16,7 +17,7 @@ export interface Post extends PostMetadata {
   content: string;
 }
 
-// server-side get all posts function
+// server-side get all posts function (uses cookies for potential auth)
 export async function getAllPosts(): Promise<PostMetadata[]> {
   const supabase = await createServerSupabaseClient();
 
@@ -76,12 +77,40 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   };
 }
 
-// generate static params for posts
-export async function getAllPostSlugs() {
-  const posts = await getAllPosts();
+// static generation function- no cookies used
+export async function getAllPostsStatic(): Promise<PostMetadata[]> {
+  const supabase = createServerSupabaseClientStatic();
+
+  const { data, error } = await supabase
+    .from('posts')
+    .select(
+      'id, title, description, created_at, image, slug, category, author, published'
+    )
+    .eq('published', true)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching posts:', error);
+    return [];
+  }
+
+  return data.map((post) => ({
+    id: post.id,
+    title: post.title,
+    description: post.description || '',
+    date: post.created_at,
+    image: post.image || '',
+    slug: post.slug,
+    category: post.category || '',
+    author: post.author,
+    published: post.published,
+  }));
+}
+
+// generate static params for posts - doesn't use cookies
+export async function getAllPostSlugsStatic() {
+  const posts = await getAllPostsStatic();
   return posts.map((post) => ({
-    params: {
-      slug: post.slug,
-    },
+    slug: post.slug,
   }));
 }

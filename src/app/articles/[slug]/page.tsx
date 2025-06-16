@@ -1,6 +1,6 @@
 import {
   getPostBySlug,
-  getAllPostSlugs,
+  getAllPostSlugsStatic,
 } from '@/lib/supabase/posts-supabase-server';
 
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import Markdown from 'markdown-to-jsx';
 import { Icon } from '@iconify/react';
 
 export async function generateStaticParams() {
-  return await getAllPostSlugs();
+  return await getAllPostSlugsStatic();
 }
 
 export default async function ArticlePostPage({
