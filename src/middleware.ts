@@ -1,4 +1,3 @@
-// root middleware.ts
 import { type NextRequest, NextResponse } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
 import { createServerClient } from '@supabase/ssr';
@@ -31,8 +30,7 @@ export async function middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
-  // auth redirects
-  if (path === '/admin') {
+  if (path.startsWith('/admin') && path !== '/admin/login') {
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -42,7 +40,6 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // login page
   if (path === '/admin/login') {
     const {
       data: { user },
@@ -50,16 +47,6 @@ export async function middleware(request: NextRequest) {
 
     if (user) {
       return NextResponse.redirect(new URL('/admin', request.url));
-    }
-  }
-
-  if (path.startsWith('/admin/posts')) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
 

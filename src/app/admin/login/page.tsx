@@ -1,16 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Icon } from '@iconify/react';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const router = useRouter();
+  const [success, setSuccess] = useState(false);
   const supabase = createClient();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -18,9 +16,11 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError('');
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithOtp({
       email,
-      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
 
     if (error) {
@@ -29,8 +29,45 @@ export default function AdminLoginPage() {
       return;
     }
 
-    router.push('/admin');
+    setSuccess(true);
+    setLoading(false);
   };
+
+  if (success) {
+    return (
+      <div className='min-h-screen flex items-center justify-center px-4'>
+        <div className='card w-full max-w-md bg-base-100 shadow-xl'>
+          <div className='card-body text-center'>
+            <div className='avatar placeholder mx-auto mb-4'>
+              <div className='bg-success text-success-content rounded-full w-16'>
+                <Icon icon='heroicons:check' className='h-8 w-8' />
+              </div>
+            </div>
+            <h2 className='card-title text-2xl justify-center mb-4'>
+              Check Your Email
+            </h2>
+            <p className='text-base-content/70 mb-6'>
+              We've sent a login link to <strong>{email}</strong>
+            </p>
+            <p className='text-sm text-base-content/60'>
+              Click the link in your email to access the POLaBRU admin panel.
+              The link will expire in 1 hour.
+            </p>
+            <div className='divider'>Didn't receive it?</div>
+            <button
+              className='btn btn-ghost btn-sm'
+              onClick={() => {
+                setSuccess(false);
+                setEmail('');
+              }}
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen flex items-center justify-center px-4'>
@@ -44,14 +81,14 @@ export default function AdminLoginPage() {
               POLaBRU Admin Access
             </h1>
             <p className='text-base-content/70 text-sm mt-2'>
-              Authorized personnel only
+              Sign in with your email
             </p>
           </div>
 
           <form onSubmit={handleLogin} className='space-y-4'>
             <div className='w-full'>
               <label className='label'>
-                <span className='label-text'>Email</span>
+                <span className='label-text'>Email Address</span>
               </label>
               <input
                 type='email'
@@ -61,20 +98,11 @@ export default function AdminLoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-            </div>
-
-            <div className='w-full'>
               <label className='label'>
-                <span className='label-text'>Password</span>
+                <span className='label-text-alt'>
+                  We'll send you a secure login link
+                </span>
               </label>
-              <input
-                type='password'
-                placeholder='••••••••'
-                className='input input-bordered w-full'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
             </div>
 
             {error && (
@@ -95,10 +123,13 @@ export default function AdminLoginPage() {
               {loading ? (
                 <>
                   <span className='loading loading-spinner loading-sm'></span>
-                  Authenticating...
+                  Sending login link...
                 </>
               ) : (
-                'Access POLaBRU'
+                <>
+                  <Icon icon='heroicons:paper-airplane' className='h-5 w-5' />
+                  Send Login Link
+                </>
               )}
             </button>
           </form>

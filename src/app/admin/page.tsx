@@ -8,6 +8,7 @@ import {
   getAllPostsAdmin,
   deletePost,
 } from '@/lib/supabase/posts-supabase-client';
+import { ensureAdminUser } from '@/lib/supabase/admin-auth';
 import { Icon } from '@iconify/react';
 
 export default function AdminPage() {
@@ -21,6 +22,31 @@ export default function AdminPage() {
     checkUser();
     loadPosts();
   }, []);
+
+  useEffect(() => {
+    const initializeAdmin = async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
+      if (error || !user) {
+        router.push('/admin/login');
+        return;
+      }
+
+      const result = await ensureAdminUser();
+
+      if (result.error) {
+        console.error('Admin initialization error:', result.error);
+        // TODO: add react hot toast and set error messages throughout
+      }
+
+      setLoading(false);
+    };
+
+    initializeAdmin();
+  }, [supabase, router]);
 
   const checkUser = async () => {
     const {
