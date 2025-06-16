@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import { getAllPosts } from '@/lib/posts';
+import { getAllPosts } from '@/lib/supabase/posts-supabase-server';
 
 import { Icon } from '@iconify/react';
 
-export default function AboutPage() {
-  const posts = getAllPosts();
+export default async function AboutPage() {
+  const posts = await getAllPosts();
   const postCount = posts.length;
 
   return (

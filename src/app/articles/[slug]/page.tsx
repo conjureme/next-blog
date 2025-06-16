@@ -1,4 +1,7 @@
-import { getPostBySlug, getAllPostSlugs } from '@/lib/posts';
+import {
+  getPostBySlug,
+  getAllPostSlugs,
+} from '@/lib/supabase/posts-supabase-server';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,7 +12,7 @@ import Markdown from 'markdown-to-jsx';
 import { Icon } from '@iconify/react';
 
 export async function generateStaticParams() {
-  return getAllPostSlugs();
+  return await getAllPostSlugs();
 }
 
 export default async function ArticlePostPage({
@@ -18,7 +21,7 @@ export default async function ArticlePostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();

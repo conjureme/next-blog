@@ -1,13 +1,13 @@
 import Link from 'next/link';
-import { getAllPosts } from '@/lib/posts';
+import { getAllPosts } from '@/lib/supabase/posts-supabase-server';
 
 import Logo from '@/components/Logo';
 import BlogCard from '@/components/BlogCard';
 
 import { Icon } from '@iconify/react';
 
-export default function HomePage() {
-  const recentPosts = getAllPosts().slice(0, 3);
+export default async function HomePage() {
+  const recentPosts = (await getAllPosts()).slice(0, 3);
 
   return (
     <div className='min-h-screen'>
@@ -80,23 +80,25 @@ export default function HomePage() {
       </section>
 
       {/* recent posts */}
-      <section className='py-20 px-4 bg-base-200'>
-        <div className='container mx-auto max-w-6xl'>
-          <h2 className='text-4xl font-bold text-center mb-16'>
-            Recent Test Logs
-          </h2>
-          <div className='grid md:grid-cols-3 gap-8'>
-            {recentPosts.map((post) => (
-              <BlogCard key={post.slug} post={post} variant='compact' />
-            ))}
+      {recentPosts.length > 0 && (
+        <section className='py-20 px-4 bg-base-200'>
+          <div className='container mx-auto max-w-6xl'>
+            <h2 className='text-4xl font-bold text-center mb-16'>
+              Recent Test Logs
+            </h2>
+            <div className='grid md:grid-cols-3 gap-8'>
+              {recentPosts.map((post) => (
+                <BlogCard key={post.slug} post={post} variant='compact' />
+              ))}
+            </div>
+            <div className='text-center mt-12'>
+              <Link href='/articles' className='btn btn-outline btn-primary'>
+                View All Test Logs
+              </Link>
+            </div>
           </div>
-          <div className='text-center mt-12'>
-            <Link href='/articles' className='btn btn-outline btn-primary'>
-              View All Test Logs
-            </Link>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* a CTA */}
       <section className='py-20 px-4'>

@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { getAllPosts } from '@/lib/posts';
+import { getAllPosts } from '@/lib/supabase/posts-supabase-server';
 import BlogCard from '@/components/BlogCard';
 
-export default function BlogPage() {
-  const posts = getAllPosts();
+export default async function BlogPage() {
+  const posts = await getAllPosts();
   const categories = Array.from(
     new Set(posts.map((post) => post.category))
   ).filter(Boolean);
@@ -62,7 +62,7 @@ export default function BlogPage() {
             </h2>
             <p className='opacity-80 mb-8'>
               All test logs have been [REDACTED] for your safety. Please check
-              back later or contact POLaBRUH for assistance.
+              back later or contact POLaBRU for assistance.
             </p>
             <Link href='/' className='btn btn-primary'>
               Return to Testing

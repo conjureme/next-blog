@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { PostMetadata } from '@/lib/posts';
+import { PostMetadata } from '@/lib/supabase/posts-supabase-server';
 
 interface BlogCardProps {
   post: PostMetadata;
