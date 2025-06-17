@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
@@ -10,18 +10,27 @@ import {
 } from '@/lib/supabase/posts-supabase-client';
 import { ensureAdminUser } from '@/lib/supabase/admin-auth';
 import { Icon } from '@iconify/react';
+import type { User } from '@supabase/supabase-js';
+import type { Post } from '@/lib/supabase/posts-supabase-client';
 
 export default function AdminPage() {
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
   const supabase = createClient();
+
+  const checkUser = useCallback(async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    setUser(user);
+  }, [supabase.auth]);
 
   useEffect(() => {
     checkUser();
     loadPosts();
-  }, []);
+  }, [checkUser]);
 
   useEffect(() => {
     const initializeAdmin = async () => {
@@ -48,13 +57,6 @@ export default function AdminPage() {
     initializeAdmin();
   }, [supabase, router]);
 
-  const checkUser = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    setUser(user);
-  };
-
   const loadPosts = async () => {
     setLoading(true);
     const allPosts = await getAllPostsAdmin();
@@ -79,12 +81,13 @@ export default function AdminPage() {
     try {
       await deletePost(id);
       setPosts(posts.filter((post) => post.id !== id));
-    } catch (error) {
+    } catch (err) {
+      console.error('Error deleting post:', err);
       alert('Error deleting post');
     }
   };
 
-  const togglePublished = async (post: any) => {
+  const togglePublished = async (post: Post) => {
     const { updatePost } = await import('@/lib/supabase/posts-supabase-client');
     try {
       await updatePost(post.id, { published: !post.published });
@@ -93,7 +96,8 @@ export default function AdminPage() {
           p.id === post.id ? { ...p, published: !p.published } : p
         )
       );
-    } catch (error) {
+    } catch (err) {
+      console.error('Error updating post:', err);
       alert('Error updating post');
     }
   };
@@ -217,7 +221,7 @@ export default function AdminPage() {
                         </button>
                       </td>
                       <td className='text-sm'>
-                        {new Date(post.created_at).toLocaleDateString()}
+                        {new Date(post.date).toLocaleDateString()}
                       </td>
                       <td>
                         <div className='flex gap-2'>

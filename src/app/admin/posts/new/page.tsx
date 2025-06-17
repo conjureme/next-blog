@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { createPost } from '@/lib/supabase/posts-supabase-client';
+import Link from 'next/link';
 import { Icon } from '@iconify/react';
 
-export default function AdminNewPostPage() {
+export default function NewPostPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -20,44 +20,33 @@ export default function AdminNewPostPage() {
     published: false,
   });
 
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      await createPost(formData);
+      await createPost({
+        ...formData,
+        slug:
+          formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-'),
+      });
       router.push('/admin');
     } catch (error) {
-      alert('Error creating post');
+      console.error('Error creating post:', error);
+      alert('Failed to create post');
       setLoading(false);
     }
   };
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const title = e.target.value;
-    setFormData({
-      ...formData,
-      title,
-      slug: generateSlug(title),
-    });
-  };
-
   return (
-    <div className='min-h-screen py-12 px-4'>
-      <div className='container mx-auto max-w-4xl'>
-        <div className='flex items-center justify-between mb-8'>
-          <h1 className='text-3xl font-bold'>Create New Post</h1>
-          <Link href='/admin' className='btn btn-ghost'>
-            <Icon icon='heroicons:arrow-left' className='w-5 h-5' />
-            Back to Dashboard
+    <div className='min-h-screen p-8'>
+      <div className='max-w-4xl mx-auto'>
+        <div className='flex items-center gap-4 mb-8'>
+          <Link href='/admin' className='btn btn-ghost btn-sm'>
+            <Icon icon='heroicons:arrow-left' className='w-4 h-4' />
+            Back
           </Link>
+          <h1 className='text-3xl font-bold'>Create New Post</h1>
         </div>
 
         <form onSubmit={handleSubmit} className='space-y-6'>
@@ -67,46 +56,45 @@ export default function AdminNewPostPage() {
 
               <div className='form-control'>
                 <label className='label'>
-                  <span className='label-text'>Title</span>
+                  <span className='label-text'>Title*</span>
                 </label>
                 <input
                   type='text'
                   placeholder='Enter post title'
                   className='input input-bordered'
                   value={formData.title}
-                  onChange={handleTitleChange}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
                   required
                 />
               </div>
 
               <div className='form-control'>
                 <label className='label'>
-                  <span className='label-text'>Slug</span>
+                  <span className='label-text'>
+                    Slug (leave blank to auto-generate)
+                  </span>
                 </label>
                 <input
                   type='text'
-                  placeholder='post-url-slug'
+                  placeholder='custom-url-slug'
                   className='input input-bordered'
                   value={formData.slug}
                   onChange={(e) =>
                     setFormData({ ...formData, slug: e.target.value })
                   }
-                  required
                 />
-                <label className='label'>
-                  <span className='label-text-alt'>
-                    URL: /articles/{formData.slug || 'slug-here'}
-                  </span>
-                </label>
               </div>
 
               <div className='form-control'>
                 <label className='label'>
-                  <span className='label-text'>Description</span>
+                  <span className='label-text'>Description*</span>
                 </label>
                 <textarea
                   placeholder='Brief description of the post'
-                  className='textarea textarea-bordered h-24'
+                  className='textarea textarea-bordered'
+                  rows={3}
                   value={formData.description}
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
@@ -115,25 +103,20 @@ export default function AdminNewPostPage() {
                 />
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <div className='grid grid-cols-2 gap-4'>
                 <div className='form-control'>
                   <label className='label'>
                     <span className='label-text'>Category</span>
                   </label>
-                  <select
-                    className='select select-bordered'
+                  <input
+                    type='text'
+                    placeholder='gaming, music, etc.'
+                    className='input input-bordered'
                     value={formData.category}
                     onChange={(e) =>
                       setFormData({ ...formData, category: e.target.value })
                     }
-                  >
-                    <option value=''>Select category</option>
-                    <option value='gaming'>Gaming</option>
-                    <option value='technology'>Technology</option>
-                    <option value='music'>Music</option>
-                    <option value='science'>Science</option>
-                    <option value='testing'>Testing</option>
-                  </select>
+                  />
                 </div>
 
                 <div className='form-control'>
@@ -172,74 +155,60 @@ export default function AdminNewPostPage() {
           <div className='card bg-base-100 shadow-xl'>
             <div className='card-body'>
               <h2 className='card-title mb-4'>Content</h2>
-
               <div className='form-control'>
                 <label className='label'>
-                  <span className='label-text'>Post Content (Markdown)</span>
+                  <span className='label-text'>Post Content (Markdown)*</span>
                 </label>
                 <textarea
-                  placeholder='Write your post content here using Markdown...'
-                  className='textarea textarea-bordered h-96 font-mono text-sm'
+                  placeholder='Write your post content in Markdown...'
+                  className='textarea textarea-bordered font-mono text-sm'
+                  rows={15}
                   value={formData.content}
                   onChange={(e) =>
                     setFormData({ ...formData, content: e.target.value })
                   }
                   required
                 />
-                <label className='label'>
-                  <span className='label-text-alt'>
-                    Supports Markdown formatting: **bold**, *italic*, #
-                    headings, etc.
-                  </span>
-                </label>
               </div>
             </div>
           </div>
 
           <div className='card bg-base-100 shadow-xl'>
             <div className='card-body'>
-              <div className='flex items-center justify-between'>
-                <div className='form-control'>
-                  <label className='label cursor-pointer'>
-                    <input
-                      type='checkbox'
-                      className='checkbox checkbox-primary mr-3'
-                      checked={formData.published}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          published: e.target.checked,
-                        })
-                      }
-                    />
-                    <span className='label-text'>Publish immediately</span>
-                  </label>
-                </div>
-
-                <div className='flex gap-3'>
-                  <Link href='/admin' className='btn btn-ghost'>
-                    Cancel
-                  </Link>
-                  <button
-                    type='submit'
-                    className='btn btn-primary'
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <span className='loading loading-spinner loading-sm'></span>
-                        Creating...
-                      </>
-                    ) : (
-                      <>
-                        <Icon icon='heroicons:check' className='w-5 h-5' />
-                        Create Post
-                      </>
-                    )}
-                  </button>
-                </div>
+              <div className='form-control'>
+                <label className='label cursor-pointer'>
+                  <span className='label-text'>Publish immediately</span>
+                  <input
+                    type='checkbox'
+                    className='toggle toggle-primary'
+                    checked={formData.published}
+                    onChange={(e) =>
+                      setFormData({ ...formData, published: e.target.checked })
+                    }
+                  />
+                </label>
               </div>
             </div>
+          </div>
+
+          <div className='flex gap-4 justify-end'>
+            <Link href='/admin' className='btn btn-ghost'>
+              Cancel
+            </Link>
+            <button
+              type='submit'
+              className='btn btn-primary'
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span className='loading loading-spinner loading-sm'></span>
+                  Creating...
+                </>
+              ) : (
+                'Create Post'
+              )}
+            </button>
           </div>
         </form>
       </div>

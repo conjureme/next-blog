@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
   animated?: boolean;
@@ -21,11 +23,16 @@ export default function Logo({
 
   return (
     <div className='relative inline-block'>
-      <img
-        src='/polar_aperture_orange.png'
-        alt="PolarBruh's Lab Orange Logo"
-        className={`${baseClasses} ${glowClasses} ${animationClasses} object-cover`}
-      />
+      <div className={`relative ${sizeClasses[size]}`}>
+        <Image
+          src='/polar_aperture_orange.png'
+          alt="PolarBruh's Lab Orange Logo"
+          className={`${baseClasses} ${glowClasses} ${animationClasses} object-cover`}
+          fill
+          sizes={size === 'lg' ? '128px' : size === 'md' ? '48px' : '32px'}
+          priority
+        />
+      </div>
       {animated && size === 'lg' && (
         <div className='absolute inset-0 w-32 h-32 rounded-full bg-secondary portal-blue-glow opacity-50 animate-pulse animation-delay-300'></div>
       )}

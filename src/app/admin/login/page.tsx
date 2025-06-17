@@ -47,13 +47,13 @@ export default function AdminLoginPage() {
               Check Your Email
             </h2>
             <p className='text-base-content/70 mb-6'>
-              We've sent a login link to <strong>{email}</strong>
+              We&apos;ve sent a login link to <strong>{email}</strong>
             </p>
             <p className='text-sm text-base-content/60'>
               Click the link in your email to access the POLaBRU admin panel.
               The link will expire in 1 hour.
             </p>
-            <div className='divider'>Didn't receive it?</div>
+            <div className='divider'>Didn&apos;t receive it?</div>
             <button
               className='btn btn-ghost btn-sm'
               onClick={() => {
@@ -100,7 +100,7 @@ export default function AdminLoginPage() {
               />
               <label className='label'>
                 <span className='label-text-alt'>
-                  We'll send you a secure login link
+                  We&apos;ll send you a secure login link
                 </span>
               </label>
             </div>

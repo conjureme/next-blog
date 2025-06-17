@@ -1,9 +1,10 @@
 import AdminEditPostPage from './AdminEditPostPage';
 
-export default function EditPostPage({
+export default async function EditPostPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  return <AdminEditPostPage params={params} />;
+  const { id } = await params;
+  return <AdminEditPostPage id={id} />;
 }

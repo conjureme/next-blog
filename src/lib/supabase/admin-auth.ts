@@ -12,7 +12,7 @@ export async function ensureAdminUser() {
     return { error: 'No authenticated user' };
   }
 
-  const { data: adminUser, error: checkError } = await supabase
+  const { error: checkError } = await supabase
     .from('admin_users')
     .select('id')
     .eq('id', user.id)
