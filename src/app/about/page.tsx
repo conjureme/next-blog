@@ -15,10 +15,9 @@ export default async function AboutPage() {
             About POLaBRU
           </h1>
           <p className='text-xl opacity-80 max-w-2xl mx-auto'>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi
-            ipsum quia, molestias, saepe officia soluta cumque aspernatur
-            officiis ducimus, eos unde sed dignissimos animi adipisci quibusdam
-            autem? Reiciendis, dolorem aspernatur.
+            Welcome to PolarBruh&apos;s Lab- where the most delightful blog
+            posts and articles are written. Not affiliated with Aperture
+            Science.
           </p>
         </div>
 

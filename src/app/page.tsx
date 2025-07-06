@@ -46,10 +46,10 @@ export default async function HomePage() {
             <div className='card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow'>
               <div className='card-body'>
                 <div className='w-16 h-16 rounded-full bg-secondary portal-blue-glow mb-4'></div>
-                <h3 className='card-title'>category 1</h3>
+                <h3 className='card-title'>Gaming</h3>
                 <p className='opacity-80'>
-                  this is a short description about what the first category of
-                  blog articles will cover
+                  Commentary and reviews on latest releases. Comprehensive
+                  evaluation of games from a real gamer.
                 </p>
               </div>
             </div>
@@ -57,10 +57,10 @@ export default async function HomePage() {
             <div className='card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow'>
               <div className='card-body'>
                 <div className='w-16 h-16 rounded-full bg-accent portal-orange-glow mb-4'></div>
-                <h3 className='card-title'>category 2</h3>
+                <h3 className='card-title'>Music</h3>
                 <p className='opacity-80'>
-                  this is a short description about what the second category of
-                  blog articles will cover
+                  Audio analysis and evaluation of musical releases, super deep
+                  dives into the science of sound.
                 </p>
               </div>
             </div>
@@ -68,10 +68,10 @@ export default async function HomePage() {
             <div className='card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow'>
               <div className='card-body'>
                 <div className='w-16 h-16 rounded-full bg-primary aperture-glow mb-4'></div>
-                <h3 className='card-title'>category 3</h3>
+                <h3 className='card-title'>Other</h3>
                 <p className='opacity-80'>
-                  this is a short description about what the third category of
-                  blog articles will cover
+                  Miscellaneous commentary on digital culture, technology, and
+                  whatever else.
                 </p>
               </div>
             </div>
